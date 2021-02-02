@@ -16,6 +16,7 @@ namespace IdentityServer.Web.Extensions
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
+                options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
                 options.OnAppendCookie = cookieContext =>
                     CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);

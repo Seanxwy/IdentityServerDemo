@@ -57,6 +57,7 @@ namespace IdentityServer.Web
             }
 
             //app.UseHsts();
+            app.UseCookiePolicy();
 
             app.UseStaticFiles();
 
