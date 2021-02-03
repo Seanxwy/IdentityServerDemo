@@ -24,11 +24,11 @@ namespace IdentityServer.Web.Identity
                        AllowRememberConsent = false,
                        RedirectUris = new List<string>()
                        {
-                           "https://localhost:5002/signin-oidc"
+                           "http://localhost:5002/signin-oidc"
                        },
                        PostLogoutRedirectUris = new List<string>()
                        {
-                           "https://localhost:5002/signout-callback-oidc"
+                           "http://localhost:5002/signout-callback-oidc"
                        },
                        ClientSecrets = new List<Secret>
                        {
