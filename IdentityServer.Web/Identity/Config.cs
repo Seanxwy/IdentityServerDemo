@@ -72,6 +72,35 @@ namespace IdentityServer.Web.Identity
                            "movieAPI",
                            "roles"
                        }
+                   },
+                   new Client
+                   {
+                       ClientId = "hosted",
+                       ClientName = "Movies MVC Web App",
+                       AllowedGrantTypes = GrantTypes.Hybrid,
+                       RequirePkce = false,
+                       AllowRememberConsent = false,
+                       RedirectUris = new List<string>()
+                       {
+                           "http://localhost:5000/signin-oidc"
+                       },
+                       PostLogoutRedirectUris = new List<string>()
+                       {
+                           "http://localhost:5000/signout-callback-oidc"
+                       },
+                       ClientSecrets = new List<Secret>
+                       {
+                           new Secret("secret".Sha256())
+                       },
+                       AllowedScopes = new List<string>
+                       {
+                           IdentityServerConstants.StandardScopes.OpenId,
+                           IdentityServerConstants.StandardScopes.Profile,
+                           IdentityServerConstants.StandardScopes.Address,
+                           IdentityServerConstants.StandardScopes.Email,
+                           "movieAPI",
+                           "roles"
+                       }
                    }
             };
 

@@ -1,4 +1,4 @@
-@using System.Diagnostics
+﻿@using System.Diagnostics
 
 @{
     var version = FileVersionInfo.GetVersionInfo(typeof(IdentityServer4.Hosting.IdentityServerMiddleware).Assembly.Location).ProductVersion.Split('+').First();
@@ -29,4 +29,10 @@
             and <a href="https://github.com/IdentityServer/IdentityServer4/tree/main/samples">ready to use samples</a>.
         </li>
     </ul>
+    <p>
+        <a href="/login">登录</a>
+    </p>
+    <p>
+        <a href="/loged">查看是否登录</a>
+    </p>
 </div>

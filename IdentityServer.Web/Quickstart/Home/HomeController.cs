@@ -3,17 +3,22 @@
 
 
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using IdentityServer4;
+using System.Security.Claims;
 
 namespace IdentityServerHost.Quickstart.UI
 {
     [SecurityHeaders]
-    [AllowAnonymous]
+
     public class HomeController : Controller
     {
         private readonly IIdentityServerInteractionService _interaction;
@@ -27,6 +32,7 @@ namespace IdentityServerHost.Quickstart.UI
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             if (_environment.IsDevelopment())
@@ -39,6 +45,7 @@ namespace IdentityServerHost.Quickstart.UI
             return NotFound();
         }
 
+        [AllowAnonymous]
         /// <summary>
         /// Shows the error page
         /// </summary>
@@ -60,6 +67,40 @@ namespace IdentityServerHost.Quickstart.UI
             }
 
             return View("Error", vm);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("login")]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync(string url)
+        {
+            // only set explicit expiration here if user chooses "remember me". 
+            // otherwise we rely upon expiration configured in cookie middleware.
+            AuthenticationProperties props = null;
+
+            // issue authentication cookie with subject ID and username
+            var isuser = new IdentityServerUser("818727")
+            {
+                DisplayName = "alice"
+            };
+
+            await HttpContext.SignInAsync(isuser, props);
+
+
+            return Redirect("/");
+        }
+
+        [Authorize]
+        [HttpGet("loged")]
+        public IActionResult Loged()
+        {
+            return View();
         }
     }
 }
