@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using IdentityServer4;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace IdentityServerHost.Quickstart.UI
 {
@@ -101,6 +102,15 @@ namespace IdentityServerHost.Quickstart.UI
         public IActionResult Loged()
         {
             return View();
+        }
+
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            return Redirect("/");
         }
     }
 }
