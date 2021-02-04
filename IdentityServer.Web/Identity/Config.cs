@@ -101,6 +101,32 @@ namespace IdentityServer.Web.Identity
                            "movieAPI",
                            "roles"
                        }
+                   },
+                   new Client
+                   {
+                       ClientId = "blazor",
+                       ClientName = "Movies MVC Web App",
+                       AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                       AllowRememberConsent = false,
+                       //刷新令牌时，将刷新RefreshToken的生命周期。RefreshToken的总生命周期不会超过AbsoluteRefreshTokenLifetime。
+                       RefreshTokenExpiration = TokenExpiration.Sliding,
+                       //RefreshToken生命周期以秒为单位。默认为1296000秒
+                       SlidingRefreshTokenLifetime = 2592000,//以秒为单位滑动刷新令牌的生命周期。
+                       //AccessToken过期时间(秒),默认为3600秒/1小时
+                       AccessTokenLifetime=3600,
+                       ClientSecrets = new List<Secret>
+                       {
+                           new Secret("secret".Sha256())
+                       },
+                       AllowedScopes = new List<string>
+                       {
+                           IdentityServerConstants.StandardScopes.OpenId,
+                           IdentityServerConstants.StandardScopes.Profile,
+                           IdentityServerConstants.StandardScopes.Address,
+                           IdentityServerConstants.StandardScopes.Email,
+                           "movieAPI",
+                           "roles"
+                       }
                    }
             };
 
@@ -113,7 +139,7 @@ namespace IdentityServer.Web.Identity
         public static IEnumerable<ApiResource> ApiResources =>
           new ApiResource[]
           {
-               //new ApiResource("movieAPI", "Movie API")
+               new ApiResource("movieAPI", "Movie API")
           };
 
         public static IEnumerable<IdentityResource> IdentityResources =>
@@ -128,21 +154,5 @@ namespace IdentityServer.Web.Identity
                     "Your role(s)",
                     new List<string>() { "role" })
           };
-
-        public static List<TestUser> TestUsers =>
-            new List<TestUser>
-            {
-                new TestUser
-                {
-                    SubjectId = "5BE86359-073C-434B-AD2D-A3932222DABE",
-                    Username = "mehmet",
-                    Password = "swn",
-                    Claims = new List<Claim>
-                    {
-                        new Claim(JwtClaimTypes.GivenName, "mehmet"),
-                        new Claim(JwtClaimTypes.FamilyName, "ozkaya")
-                    }
-                }
-            };
     }
 }

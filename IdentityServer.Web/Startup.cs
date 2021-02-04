@@ -38,18 +38,26 @@ namespace IdentityServer.Web
             services.AddIdentityServer()
                 .AddInMemoryClients(Config.Clients)
                 .AddInMemoryApiScopes(Config.ApiScopes)
+                .AddInMemoryApiResources(Config.ApiResources)
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddTestUsers(TestUsers.Users)
                 .AddDeveloperSigningCredential();
 
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+                .AddJwtBearer("Bearer", options =>
+                {
+                    //identityserver4 地址 也就是本项目地址
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = "movieAPI openid profile address";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                })
+                     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = "http://localhost:5000";
 
@@ -82,6 +90,47 @@ namespace IdentityServer.Web
                     };
                 });
 
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            //})
+            //    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            //    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            //    {
+            //        options.Authority = "http://localhost:5000";
+
+            //        options.ClientId = "hosted";
+            //        options.ClientSecret = "secret";
+            //        options.ResponseType = "code id_token";
+            //        options.RequireHttpsMetadata = false;
+
+            //        //options.Scope.Add("openid");
+            //        //options.Scope.Add("profile");
+            //        options.Scope.Add("address");
+            //        options.Scope.Add("email");
+            //        options.Scope.Add("roles");
+
+            //        options.ClaimActions.DeleteClaim("sid");
+            //        options.ClaimActions.DeleteClaim("idp");
+            //        options.ClaimActions.DeleteClaim("s_hash");
+            //        options.ClaimActions.DeleteClaim("auth_time");
+            //        options.ClaimActions.MapUniqueJsonKey("role", "role");
+
+            //        options.Scope.Add("movieAPI");
+
+            //        options.SaveTokens = true;
+            //        options.GetClaimsFromUserInfoEndpoint = true;
+
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            NameClaimType = JwtClaimTypes.GivenName,
+            //            RoleClaimType = JwtClaimTypes.Role
+            //        };
+            //    });
+
+
+
             services.AddSameSiteCookiePolicy();//在不使用https得情况下，解决浏览器cookie政策问题
 
             //services.AddRazorPages();
@@ -105,13 +154,15 @@ namespace IdentityServer.Web
 
             app.UseStaticFiles();
 
+
             app.UseRouting();
+
+            app.UseIdentityServer();
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseIdentityServer();
 
-           
+
 
             app.UseEndpoints(endpoints =>
             {
